@@ -1,0 +1,66 @@
+{
+  "DropButton": {
+    "fileDrop": "ここにファイルをドロップ",
+    "invalidFileFormatException": "サポートされていないファイル形式です。hwpまたはhwpx形式を選択してください。"
+  },
+  "ChatAreaDropButton": {
+    "fileDropOrClick": "ファイルをドラッグするかクリックしてアップロード",
+    "fileSelect": "ファイル選択",
+    "invalidFileFormatException": "サポートされていないファイル形式です。hwpまたはhwpx形式を選択してください。",
+    "unknownServerException": "予期しないサーバーエラーが発生しました。しばらくしてからもう一度お試しください。",
+    "invalidApiKeyException": "無効なAPIキーです。再度確認してください。"
+  },
+  "SidebarHeader": {
+    "chat": "チャット"
+  },
+  "SidebarListItemMenuButton": {
+    "edit": "名前を変更",
+    "share": "共有",
+    "delete": "削除"
+  },
+  "LoadingSpinner": {
+    "loading": "読み込み中..."
+  },
+  "ChatInput": {
+    "unknownServerException": "予期しないサーバーエラーが発生しました。しばらくしてからもう一度お試しください。",
+    "invalidApiKeyException": "無効なAPIキーです。再度確認してください。"
+  },
+  "SidebarApiKeyInput": {
+    "apiKeyInputPlaceholder": "GPT APIキーを入力してください",
+    "hideApiKey": "APIキーを隠す",
+    "showApiKey": "APIキーを表示",
+    "apiKeyDescription": "APIキーはデータベースに保存されず、<br />ブラウザにのみ保存されます。 <br/>APIはGPT APIを使用します。"
+  },
+  "AuthModal": {
+    "login": "ログイン",
+    "signup": "新規登録",
+    "email": "メールアドレス",
+    "emailPlaceholder": "you@mail.com",
+    "username": "ユーザー名",
+    "usernamePlaceholder": "ユーザー名を入力してください",
+    "password": "パスワード",
+    "passwordPlaceholder": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？リセットする",
+    "noAccount": "既にアカウントをお持ちですか？",
+    "hasAccount": "アカウントをお持ちでないですか？",
+    "loading": "処理中...",
+    "loginSuccess": "ログインに成功しました。",
+    "signupSuccess": "新規登録に成功しました。",
+    "loginError": "メールアドレスまたはパスワードが正しくありません。",
+    "signupError": "新規登録に失敗しました。メールアドレスまたはユーザー名が既に使用されている可能性があります。",
+    "serverError": "サーバーエラーが発生しました。しばらくしてからもう一度お試しください。",
+    "invalidEmail": "有効なメールアドレスを入力してください。",
+    "passwordRequirements": "パスワードは8文字以上で、英字と数字を含む必要があります。",
+    "emailRequired": "メールアドレスを入力してください。",
+    "passwordRequired": "パスワードを入力してください。",
+    "usernameRequired": "ユーザー名を入力してください。"
+  },
+  "loginButton": {
+    "login": "ログイン"
+  },
+  "UserProfile": {
+    "logout": "ログアウト",
+    "logoutSuccess": "ログアウトしました。"
+  }
+}
+

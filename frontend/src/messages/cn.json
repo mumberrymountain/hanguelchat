@@ -1,0 +1,66 @@
+{
+  "DropButton": {
+    "fileDrop": "将文件拖放到此处",
+    "invalidFileFormatException": "不支持的文件格式。请选择hwp或hwpx格式。"
+  },
+  "ChatAreaDropButton": {
+    "fileDropOrClick": "拖放或点击上传文件",
+    "fileSelect": "选择文件",
+    "invalidFileFormatException": "不支持的文件格式。请选择hwp或hwpx格式。",
+    "unknownServerException": "发生意外服务器错误。请稍后再试。",
+    "invalidApiKeyException": "无效的API密钥。请再次检查。"
+  },
+  "SidebarHeader": {
+    "chat": "聊天"
+  },
+  "SidebarListItemMenuButton": {
+    "edit": "重命名",
+    "share": "分享",
+    "delete": "删除"
+  },
+  "LoadingSpinner": {
+    "loading": "加载中..."
+  },
+  "ChatInput": {
+    "unknownServerException": "发生意外服务器错误。请稍后再试。",
+    "invalidApiKeyException": "无效的API密钥。请再次检查。"
+  },
+  "SidebarApiKeyInput": {
+    "apiKeyInputPlaceholder": "输入您的GPT API密钥",
+    "hideApiKey": "隐藏API密钥",
+    "showApiKey": "显示API密钥",
+    "apiKeyDescription": "API密钥不会存储在数据库中，<br />仅存储在您的浏览器中。 <br/>我们使用GPT API。"
+  },
+  "AuthModal": {
+    "login": "登录",
+    "signup": "注册",
+    "email": "电子邮件地址",
+    "emailPlaceholder": "you@mail.com",
+    "username": "用户名",
+    "usernamePlaceholder": "请输入用户名",
+    "password": "密码",
+    "passwordPlaceholder": "密码",
+    "forgotPassword": "忘记密码？重置",
+    "noAccount": "已有账户？",
+    "hasAccount": "没有账户？",
+    "loading": "处理中...",
+    "loginSuccess": "登录成功。",
+    "signupSuccess": "注册成功。",
+    "loginError": "电子邮件或密码不正确。",
+    "signupError": "注册失败。电子邮件或用户名可能已被使用。",
+    "serverError": "发生服务器错误。请稍后再试。",
+    "invalidEmail": "请输入有效的电子邮件地址。",
+    "passwordRequirements": "密码必须至少8个字符，并包含字母和数字。",
+    "emailRequired": "请输入您的电子邮件。",
+    "passwordRequired": "请输入您的密码。",
+    "usernameRequired": "请输入您的用户名。"
+  },
+  "loginButton": {
+    "login": "登录"
+  },
+  "UserProfile": {
+    "logout": "登出",
+    "logoutSuccess": "已成功登出。"
+  }
+}
+

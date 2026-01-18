@@ -1,0 +1,65 @@
+{
+  "DropButton": {
+    "fileDrop": "اسقط الملف",
+    "invalidFileFormatException": "تنسيق ملف غير مسموح. يرجى اختيار أحد تنسيقات hwp أو hwpx."
+  },
+  "ChatAreaDropButton": {
+    "fileDropOrClick": "اسحب الملف أو انقر للرفع",
+    "fileSelect": "اختيار الملف",
+    "invalidFileFormatException": "تنسيق ملف غير مسموح. يرجى اختيار أحد تنسيقات hwp أو hwpx.",
+    "unknownServerException": "حدث خطأ في الخادم لسبب غير معروف. يرجى المحاولة مرة أخرى لاحقاً.",
+    "invalidApiKeyException": "مفتاح API غير صالح. يرجى التحقق مرة أخرى."
+  },
+  "SidebarHeader": {
+    "chat": "المحادثة"
+  },
+  "SidebarListItemMenuButton": {
+    "edit": "إعادة تسمية",
+    "share": "مشاركة",
+    "delete": "حذف"
+  },
+  "LoadingSpinner": {
+    "loading": "جاري التحميل..."
+  },
+  "ChatInput": {
+    "unknownServerException": "حدث خطأ في الخادم لسبب غير معروف. يرجى المحاولة مرة أخرى لاحقاً.",
+    "invalidApiKeyException": "مفتاح API غير صالح. يرجى التحقق مرة أخرى."
+  },
+  "SidebarApiKeyInput": {
+    "apiKeyInputPlaceholder": "أدخل مفتاح GPT API الخاص بك",
+    "hideApiKey": "إخفاء مفتاح API",
+    "showApiKey": "إظهار مفتاح API",
+    "apiKeyDescription": "لا يتم تخزين مفاتيح API في قاعدة البيانات،<br />يتم تخزينها فقط في متصفحك. <br/>نحن نستخدم GPT API."
+  },
+  "AuthModal": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "email": "عنوان البريد الإلكتروني",
+    "emailPlaceholder": "you@mail.com",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟ إعادة تعيين",
+    "noAccount": "هل لديك حساب بالفعل؟",
+    "hasAccount": "ليس لديك حساب؟",
+    "loading": "جاري المعالجة...",
+    "loginSuccess": "تم تسجيل الدخول بنجاح.",
+    "signupSuccess": "تم إنشاء الحساب بنجاح.",
+    "loginError": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "signupError": "فشل إنشاء الحساب. قد يكون البريد الإلكتروني أو اسم المستخدم مستخدماً بالفعل.",
+    "serverError": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقاً.",
+    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صالح.",
+    "passwordRequirements": "يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على أحرف وأرقام.",
+    "emailRequired": "يرجى إدخال بريدك الإلكتروني.",
+    "passwordRequired": "يرجى إدخال كلمة المرور.",
+    "usernameRequired": "يرجى إدخال اسم المستخدم."
+  },
+  "loginButton": {
+    "login": "تسجيل الدخول"
+  },
+  "UserProfile": {
+    "logout": "تسجيل الخروج",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح."
+  }
+}

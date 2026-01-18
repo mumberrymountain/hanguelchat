@@ -1,0 +1,97 @@
+{
+  "page": {
+    "headerContainer": "bg-[#faf9f5]",
+    "panelLeft": "text-[#3d3d3a]"
+  },
+  "logo": {
+    "textColor": "#3d3d3a",
+    "inkGradientStart": "#3d3d3d",
+    "inkGradientEnd": "#1f1f1f",
+    "accentGradientStart": "#7d9b76",
+    "accentGradientEnd": "#5c7a56"
+  },
+  "dropButton": {
+    "base": "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
+  },
+  "localeListBox": {
+    "listboxButton": "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400",
+    "listboxOptions": "bg-white border-gray-300",
+    "listboxOption": "text-gray-700 hover:bg-gray-100 data-[focus]:bg-gray-100 data-[selected]:bg-blue-600 data-[selected]:text-white"
+  },
+  "sideBar": {
+    "sideBarContainer": "bg-[#faf9f5]",
+    "sideBarBorder": "border-t-[#e1e0dc]"
+  },
+  "sideBarHeader": {
+    "sideBarChatIconText": "text-gray-700",
+    "sideBarChatIcon": "#1b2328"
+  },
+  "sideBarListItemText": {
+    "itemInputOuter": "bg-white border-gray-200",
+    "itemInput": "text-gray-700 placeholder-gray-400",
+    "itemText": "text-gray-700 hover:text-gray-900"
+  },
+  "sideBarListItemMenuButton": {
+    "menuIcon": "text-gray-700 hover:text-gray-80",
+    "popOverPanel": "bg-white ring-gray-200",
+    "menuItem": "text-gray-500 hover:bg-gray-700 hover:text-white",
+    "menuDeleteItem": "text-red-600 hover:bg-red-50 hover:text-red-700"
+  },
+  "chatArea": {
+    "container": "bg-[#faf9f5] border-l border-l-[#e1e0dc] border-t border-t-[#e1e0dc]"
+  },
+  "chatAreaDropButton": {
+    "fileDropZoneSection": "border-gray-200 bg-gray-50/90",
+    "fileDropZoneSectionInnerDiv": "border-gray-300 hover:border-blue-400 bg-gray-50/50 text-gray-600",
+    "fileDropZoneUploadIcon": "text-gray-600",
+    "fileDropZoneUploadText": "text-gray-700"
+  },
+  "chatDisplayArea": {
+    "text": "text-gray-700"
+  },
+  "chatMessage": {
+    "userMessage": "border-stone-200/50 text-stone-800 bg-stone-50"
+  },
+  "chatInput": {
+    "container": "bg-white border border-gray-200 hover:border-blue-400 focus-within:border-blue-400 focus-within:shadow-lg focus-within:shadow-blue-400/20",
+    "textarea": "text-gray-700 placeholder-gray-400 scrollbar-thumb-gray-300",
+    "textareaScrollbar": "#d1d5db transparent",
+    "sendButton": "bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300"
+  },
+  "sideBarApiKeyInput": {
+    "container": "bg-gray-50 border-gray-200",
+    "input": "bg-white border-gray-300 text-gray-700 focus:border-blue-400 focus:bg-white focus:ring-blue-400 placeholder:text-gray-400",
+    "toggleButton": "text-gray-500 hover:text-gray-700 hover:bg-gray-100",
+    "description": "text-gray-600"
+  },
+  "authModal": {
+    "container": "bg-white text-gray-800",
+    "closeButton": "text-gray-500 hover:text-gray-700",
+    "logo": "text-gray-800",
+    "label": "text-gray-700",
+    "input": "bg-white border-gray-300 text-gray-700 placeholder-gray-400 focus:ring-purple-500",
+    "inputIcon": "text-gray-400",
+    "passwordToggle": "text-gray-400 hover:text-gray-600",
+    "forgotPassword": "text-purple-600 hover:text-purple-700",
+    "toggleText": "text-gray-600",
+    "toggleLink": "text-purple-600 hover:text-purple-700",
+    "submitButton": "bg-purple-600 hover:bg-purple-700 text-white disabled:bg-gray-400"
+  },
+  "loginButton": {
+    "button": "bg-purple-600 hover:bg-purple-700 text-white"
+  },
+  "userProfile": {
+    "button": "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400",
+    "avatar": "bg-purple-600 text-white",
+    "name": "text-gray-800",
+    "handle": "text-gray-500"
+  },
+  "userProfileMenu": {
+    "container": "bg-white border border-gray-200 shadow-lg",
+    "border": "border-gray-200",
+    "name": "text-gray-800",
+    "handle": "text-gray-500",
+    "logoutButton": "text-gray-700 hover:bg-gray-100"
+  },
+  "toaster": "light"
+}

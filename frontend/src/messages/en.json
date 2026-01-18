@@ -1,0 +1,65 @@
+{
+  "DropButton": {
+    "fileDrop": "Drop File Here",
+    "invalidFileFormatException": "Unsupported file format. Please select either the hwp or hwpx format."
+  },
+  "ChatAreaDropButton": {
+    "fileDropOrClick": "Drag or click to upload",
+    "fileSelect": "Select File",
+    "invalidFileFormatException": "Unsupported file format. Please select either the hwp or hwpx format.",
+    "unknownServerException": "An unexpected server error occurred. Please try again later.",
+    "invalidApiKeyException": "Invalid API key. Please check again."
+  },
+  "SidebarHeader": {
+    "chat": "Chat"
+  },
+  "SidebarListItemMenuButton": {
+    "edit": "Rename",
+    "share": "Share",
+    "delete": "Delete"
+  },
+  "LoadingSpinner": {
+    "loading": "Loading..."
+  },
+  "ChatInput": {
+    "unknownServerException": "An unexpected server error occurred. Please try again later.",
+    "invalidApiKeyException": "مفتاح API غير صالح. يرجى التحقق مرة أخرى."
+  },
+  "SidebarApiKeyInput": {
+    "apiKeyInputPlaceholder": "Enter your GPT API key",
+    "hideApiKey": "Hide API key",
+    "showApiKey": "Show API key",
+    "apiKeyDescription": "API keys are not stored in the database,<br />they are only stored in your browser. <br/>We use the GPT API."
+  },
+  "AuthModal": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email Address",
+    "emailPlaceholder": "you@mail.com",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "forgotPassword": "Forgot your password? Reset it",
+    "noAccount": "Already have an account?",
+    "hasAccount": "Don't have an account?",
+    "loading": "Processing...",
+    "loginSuccess": "Login successful.",
+    "signupSuccess": "Sign up successful.",
+    "loginError": "Email or password is incorrect.",
+    "signupError": "Sign up failed. Email or username may already be in use.",
+    "serverError": "A server error occurred. Please try again later.",
+    "invalidEmail": "Please enter a valid email address.",
+    "passwordRequirements": "Password must be at least 8 characters and contain both letters and numbers.",
+    "emailRequired": "Please enter your email.",
+    "passwordRequired": "Please enter your password.",
+    "usernameRequired": "Please enter your username."
+  },
+  "loginButton": {
+    "login": "Login"
+  },
+  "UserProfile": {
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully."
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "DropButton": {
+    "fileDrop": "파일을 놓으세요",
+    "invalidFileFormatException": "허용되지 않은 파일 형식입니다. hwp, hwpx 형식 중 하나를 선택해주세요."
+  },
+  "ChatAreaDropButton": {
+    "fileDropOrClick": "파일을 드래그하거나 클릭하여 업로드",
+    "fileSelect": "파일 선택",
+    "invalidFileFormatException": "허용되지 않은 파일 형식입니다. hwp, hwpx 형식 중 하나를 선택해주세요.",
+    "unknownServerException": "원인을 알 수 없는 서버 에러가 발생했습니다. 잠시 후 다시 확인해주세요.",
+    "invalidApiKeyException": "유효하지 않은 API 키입니다. 다시 확인해주세요."
+  },
+  "SidebarHeader": {
+    "chat": "채팅"
+  },
+  "SidebarListItemMenuButton": {
+    "edit": "이름 변경",
+    "share": "공유하기",
+    "delete": "삭제"
+  },
+  "LoadingSpinner": {
+    "loading": "로딩중..."
+  },
+  "ChatInput": {
+    "unknownServerException": "원인을 알 수 없는 서버 에러가 발생했습니다. 잠시 후 다시 확인해주세요.",
+    "invalidApiKeyException": "유효하지 않은 API 키입니다. 다시 확인해주세요."
+  },
+  "SidebarApiKeyInput": {
+    "apiKeyInputPlaceholder": "GPT API 키를 입력하세요",
+    "hideApiKey": "API 키 숨기기",
+    "showApiKey": "API 키 보기",
+    "apiKeyDescription": "API 키는 데이터베이스에 저장되지 않으며,<br />브라우저에만 저장됩니다. <br/>API는 GPT API를 사용합니다."
+  },
+  "AuthModal": {
+    "login": "로그인",
+    "signup": "회원가입",
+    "email": "이메일 주소",
+    "emailPlaceholder": "you@mail.com",
+    "username": "사용자명",
+    "usernamePlaceholder": "사용자명을 입력하세요",
+    "password": "비밀번호",
+    "passwordPlaceholder": "비밀번호",
+    "forgotPassword": "비밀번호를 잊어버렸어? 재설정하기",
+    "noAccount": "이미 계정이 있어?",
+    "hasAccount": "계정이 없어?",
+    "loading": "처리 중...",
+    "loginSuccess": "로그인에 성공했습니다.",
+    "signupSuccess": "회원가입에 성공했습니다.",
+    "loginError": "이메일 또는 비밀번호가 올바르지 않습니다.",
+    "signupError": "회원가입에 실패했습니다. 이메일이나 사용자명이 이미 사용 중일 수 있습니다.",
+    "serverError": "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    "invalidEmail": "올바른 이메일 형식을 입력해주세요.",
+    "passwordRequirements": "비밀번호는 최소 8자 이상이며, 영문자와 숫자를 포함해야 합니다.",
+    "emailRequired": "이메일을 입력해주세요.",
+    "passwordRequired": "비밀번호를 입력해주세요.",
+    "usernameRequired": "사용자명을 입력해주세요."
+  },
+  "loginButton": {
+    "login": "로그인"
+  },
+  "UserProfile": {
+    "logout": "로그아웃",
+    "logoutSuccess": "로그아웃되었습니다."
+  }
+}

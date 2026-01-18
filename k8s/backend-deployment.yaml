@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: backend-deployment
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hangeul-chat-backend
+  
+  template:
+    metadata:
+      labels: 
+        app: hangeul-chat-backend
+    spec:
+      containers:
+        - name: hangeul-chat-backend
+          image: hangeul-chat-backend
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090

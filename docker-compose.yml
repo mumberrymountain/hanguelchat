@@ -1,0 +1,71 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hangeul-chat-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hangeul_chat
+      MYSQL_USER: hangeul_user
+      MYSQL_PASSWORD: 123456789
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hangeul-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: hangeul-chat-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hangeul-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - 3000:3000
+    networks:
+      - hangeul-network
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - 9090:9090
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hangeul_chat?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: hangeul_user
+      SPRING_DATASOURCE_PASSWORD: 123456789
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hangeul-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  hangeul-network:
+    driver: bridge
