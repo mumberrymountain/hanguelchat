@@ -1,6 +1,6 @@
 # 한글챗 (Hangeul Chat)
 
-![Image](https://github.com/user-attachments/assets/070da544-4166-420c-8157-bd5487ea7ef9)
+![Image](https://github.com/user-attachments/assets/430cdd3d-f717-4d32-9eab-5137ae5b32f1)
 
 ## 1. 개요
 
@@ -67,16 +67,14 @@
 
 ### 사용자 경험
 
-<img width="920" height="401" alt="Image" src="https://github.com/user-attachments/assets/d6b0e6e0-c077-4b95-ac72-9060050e03ba" />
-
+<img width="920" height="401" alt="Image" src="https://github.com/user-attachments/assets/b6cd0151-dc22-49c8-8c83-ae7dc6f48388" />
 
 - **다크/라이트 테마**: IDE 스타일의 세련된 다크 테마와 밝은 라이트 테마 지원
 
-<img width="920" height="401" alt="Image" src="https://github.com/user-attachments/assets/46b60208-5d7c-4583-afe5-a54dc8654bf0" />
-
+<img width="920" height="401" alt="Image" src="https://github.com/user-attachments/assets/873fa60e-c43f-4984-8ccd-99657aab20db" />
 
 - **다국어 지원**: 한국어, 영어, 아랍어 3개 언어 지원 (next-intl)
-- **회원 관리**: 로그인/회원가입으로 대화 기록 영구 저장
+- **회원 관리**: 로그인/회원가입으로 대화 기록 영구 저장 <br>
 - **사이드바**: 이전 채팅 스레드 목록 관리 (이름 변경, 삭제)
 
 ---
@@ -85,7 +83,7 @@
 
 ### 스레드와 채팅이 많을 때 렌더링 성능 문제 
 
-<img width="818" height="451" alt="Image" src="https://github.com/user-attachments/assets/05ebc5d6-563b-4f14-8bf8-0abb19bbdb64" />
+<img width="818" height="451" alt="Image" src="https://github.com/user-attachments/assets/e9b35925-fffe-48c3-bcad-cf020338ff60" />
 
 
 **문제**
@@ -147,7 +145,7 @@ const SidebarList = () => {
 
 ### 라이트 테마에서 스크롤 시 테마 깜빡임 문제
 
-<img width="818" height="451" alt="Image" src="https://github.com/user-attachments/assets/58b8d1d8-a91e-44d4-858f-3373f9abbbb3" />
+<img width="818" height="451" alt="Image" src="https://github.com/user-attachments/assets/f867bc24-3fe4-475b-912c-13caafaed822" />
 
 **문제**
 - react-virtuoso로 가상 스크롤 적용 이후 라이트 테마 상태에서 채팅 영역 스크롤시 새로 렌더링되는 Message 컴포넌트가 잠깐 다크 테마로 표시되었다가 라이트 테마로 전환되는 깜빡임 현상 발생
