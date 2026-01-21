@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: backend-deployment
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hangeul-chat-backend
+  
+  template:
+    metadata:
+      labels: 
+        app: hangeul-chat-backend
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              until nc -z mysql-service 3306; do
+                echo "Waiting for MySQL to be ready..."
+                sleep 2
+              done
+              echo "MySQL is ready!"
+      containers:
+        - name: hangeul-chat-backend
+          image: hangeul-chat-backend
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090
+          envFrom:
+            - secretRef:
+                name: backend-secret
