@@ -5,12 +5,20 @@ metadata:
   name: mysql-init-config
 
 data:
-  init.sql: |
-    -- 사용자 생성 및 권한 부여 (모든 호스트에서 접근 가능하도록)
-    -- MySQL 8.0에서는 CREATE USER와 GRANT를 분리해야 함
-    CREATE USER IF NOT EXISTS 'hangeul_user'@'%' IDENTIFIED BY '123456789';
-    GRANT ALL PRIVILEGES ON hangeul_chat.* TO 'hangeul_user'@'%';
+  init.sh: |
+    #!/bin/bash
+    set -e
+    
+    # 사용자 생성 및 권한 부여 (모든 호스트에서 접근 가능하도록)
+    # MySQL 8.0에서는 CREATE USER와 GRANT를 분리해야 함
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" <<EOF
+    CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
+    GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
     FLUSH PRIVILEGES;
+    EOF
+    
+    # 테이블 생성
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" <<EOF
 
     -- User 테이블 (회원 정보)
     CREATE TABLE IF NOT EXISTS users (
@@ -50,4 +58,5 @@ data:
         INDEX idx_thread_id (thread_id),
         INDEX idx_timestamp (timestamp)
     );
+    EOF
 
