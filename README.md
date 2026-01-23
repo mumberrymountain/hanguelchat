@@ -153,6 +153,32 @@ const SidebarList = () => {
 **해결**
 - 모듈 레벨에서 테마를 캐싱, 새 컴포넌트 마운트 시 올바른 테마를 초기값으로 사용하도록 수정
 
+### MySQL 파드 미준비로 인한 백엔드 파드 생성 실패 문제
+
+**문제**
+- Kubernetes에서 백엔드 파드를 띄울 때 MySQL 파드가 아직 생성되지 않았거나 준비되지 않은 상태에서 백엔드 파드가 시작되면서 간헐적으로 파드 생성이 실패함
+- 백엔드 애플리케이션이 시작할 때 MySQL에 연결을 시도하지만 MySQL이 준비되지 않아 연결 실패로 파드 재시작 루프 발생
+
+**해결**
+- 백엔드 Deployment에 `initContainers`를 추가하여 MySQL 파드가 준비될 때까지 대기 처리
+
+```yml
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              until nc -z mysql-service 3306; do
+                echo "Waiting for MySQL to be ready..."
+                sleep 2
+              done
+              echo "MySQL is ready!"
+```
+
+- `initContainers`를 사용하여 MySQL 서비스(`mysql-service:3306`)가 응답할 때까지 주기적으로 헬스체크를 수행
+- MySQL이 준비된 후에만 백엔드 컨테이너가 시작되도록 보장하여 파드 생성 실패 문제 해결
+
 ---
 
 ## 5. 아쉬운 점 및 추후 보완점
