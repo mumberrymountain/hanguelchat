@@ -32,4 +32,12 @@ server:
 file:
   dir: ${java.io.tmpdir}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: when-authorized
 
