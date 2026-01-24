@@ -1,7 +1,7 @@
 services:
   mysql:
-    image: mysql:8.0
-    container_name: hangeul-chat-mysql
+    image: mariadb:10
+    container_name: hangeul-chat-mariadb
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: hangeul_chat
