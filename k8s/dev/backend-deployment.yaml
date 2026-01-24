@@ -15,17 +15,6 @@ spec:
       labels: 
         app: hangeul-chat-backend
     spec:
-      initContainers:
-        - name: wait-for-mysql
-          image: busybox:1.35
-          command: ['sh', '-c']
-          args:
-            - |
-              until nc -z mysql-service 3306; do
-                echo "Waiting for MySQL to be ready..."
-                sleep 2
-              done
-              echo "MySQL is ready!"
       containers:
         - name: hangeul-chat-backend
           image: hangeul-chat-backend
@@ -35,11 +24,18 @@ spec:
           envFrom:
             - secretRef:
                 name: backend-secret
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9090
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 28
+          # 실행 중 health check
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 9090
-            initialDelaySeconds: 120
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
@@ -47,7 +43,6 @@ spec:
             httpGet:
               path: /actuator/health
               port: 9090
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            timeoutSeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
             failureThreshold: 3
