@@ -6,6 +6,7 @@ import kr.mumberrymountain.hangeulchat.component.factory.ChatClientFactory;
 import kr.mumberrymountain.hangeulchat.util.PromptConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -23,74 +24,67 @@ import java.util.List;
 public class ChatServiceImpl implements ChatService {
 
     private final FileStore fileStore;
-//    private final DuplicatedChunkFilter duplicatedChunkFilter;
+    private final DuplicatedChunkFilter duplicatedChunkFilter;
     private final DocumentStore documentStore;
     private final ChatClientFactory chatClientFactory;
+    private final SummarizeFileCache summarizeFileCache;
     private HangeulTextExtractor hangeulTextExtractor;
 
-    @SneakyThrows
-    @Override
-    public String summarize(MultipartFile multipartFile, String threadId, String apiKey) {
-        File file = null;
-
-        try {
-            file = fileStore.storeFile(multipartFile);
-
-            switch (FilenameUtils.getExtension(file.getName())) {
-                case "hwpx" -> hangeulTextExtractor = new HwpxTextExtractor();
-                case "hwp" -> hangeulTextExtractor = new HwpTextExtractor();
-            }
-
-            String text = hangeulTextExtractor.extract(file);
-
-            // 문서 내용을 threadId로 저장
-            documentStore.store(threadId, text);
-
-            return chatClientFactory.create(apiKey)
-                    .prompt()
-                    .system(PromptConfig.DOCUMENT_SUMMARY_SYSTEM_PROMPT)
-                    .user(PromptConfig.DOCUMENT_SUMMARY_USER_PROMPT_PREFIX + text)
-                    .call()
-                    .content();
-        } finally {
-            if (file != null && file.exists()) file.delete();
-        }
-    }
 
     @SneakyThrows
     @Override
     public Flux<String> summarizeStream(MultipartFile multipartFile, String threadId, String apiKey) {
-        File file = fileStore.storeFile(multipartFile);
+        File file = null;
 
+        try {
+            // 파일을 먼저 저장 (해시 계산 전에 저장해야 InputStream이 소비되지 않음)
+            file = fileStore.storeFile(multipartFile);
+
+            // 저장된 파일로부터 해시 계산 (Apache Commons Codec 사용)
+            String fileHash;
+            try (java.io.FileInputStream fis = new java.io.FileInputStream(file)) {
+                fileHash = DigestUtils.sha256Hex(fis);
+            }
+
+            // 캐시에서 조회
+            String text = summarizeFileCache.get(fileHash);
+
+            if (text == null) {
+                text = extractTextFromFile(file, threadId, apiKey);
+                summarizeFileCache.put(fileHash, text);
+            }
+
+            // 문서 내용을 threadId로 저장
+            documentStore.store(threadId, text);
+
+            final File finalFile = file; // 람다에서 사용하기 위해 final 변수로
+            return chatClientFactory.create(apiKey)
+                    .prompt()
+                    .system(PromptConfig.DOCUMENT_SUMMARY_SYSTEM_PROMPT)
+                    .user(PromptConfig.DOCUMENT_SUMMARY_USER_PROMPT_PREFIX + text)
+                    .stream()
+                    .content()
+                    .doFinally(signal -> {
+                        if (finalFile != null && finalFile.exists()) finalFile.delete();
+                    });
+        } catch (Exception e) {
+            // 예외 발생 시 파일 정리
+            if (file != null && file.exists()) file.delete();
+            // 예외를 Flux 에러로 변환
+            return Flux.error(e);
+        }
+    }
+
+    @SneakyThrows
+    private String extractTextFromFile(File file, String threadId, String apiKey) {
         switch (FilenameUtils.getExtension(file.getName())) {
             case "hwpx" -> hangeulTextExtractor = new HwpxTextExtractor();
             case "hwp" -> hangeulTextExtractor = new HwpTextExtractor();
         }
 
         String text = hangeulTextExtractor.extract(file);
-
-        // 문서 내용을 threadId로 저장
-        documentStore.store(threadId, text);
-
-        return chatClientFactory.create(apiKey)
-                .prompt()
-                .system(PromptConfig.DOCUMENT_SUMMARY_SYSTEM_PROMPT)
-                .user(PromptConfig.DOCUMENT_SUMMARY_USER_PROMPT_PREFIX + text)
-                .stream()
-                .content()
-                .doFinally(signal -> {
-                    if (file.exists()) file.delete();
-                });
-    }
-
-    @Override
-    public String chat(String threadId, String message, List<ChatRequest.ChatMessageDto> chatHistory, String apiKey) {        // 저장된 문서 내용 조회
-        return chatClientFactory.create(apiKey)
-                                .prompt()
-                                .system(PromptConfig.chatSystemPrompt(documentStore.get(threadId)))
-                                .messages(chatUserPrompt(chatHistory, message))
-                                .call()
-                                .content();
+        if (text.length() > 10000) text = duplicatedChunkFilter.filter(text, file.getName(), apiKey);
+        return text;
     }
 
     @Override

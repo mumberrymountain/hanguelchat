@@ -17,27 +17,12 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @PostMapping("/summarize")
-    @ResponseBody
-    public String summarize(
-            @RequestParam("file") MultipartFile multipartFile,
-            @RequestParam("threadId") String threadId,
-            @RequestParam("apiKey") String apiKey) {
-        return chatService.summarize(multipartFile, threadId, apiKey);
-    }
-
     @PostMapping(value = "/summarize/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> summarizeStream(
             @RequestParam("file") MultipartFile multipartFile,
             @RequestParam("threadId") String threadId,
             @RequestParam("apiKey") String apiKey) {
         return chatService.summarizeStream(multipartFile, threadId, apiKey);
-    }
-
-    @PostMapping("/chat")
-    @ResponseBody
-    public String chat(@RequestBody ChatRequest request) {
-        return chatService.chat(request.getThreadId(), request.getMessage(), request.getChatHistory(), request.getApiKey());
     }
 
     @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
