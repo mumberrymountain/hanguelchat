@@ -206,6 +206,55 @@ const SidebarList = () => {
 | 최소 생성 시간 | 122초 | 39초 | 68.0% 개선 |
 | 최대 생성 시간 | 147초 | 57초 | 61.2% 개선 |
 
+### 파일 업로드 시 요약 API 성능 문제
+
+**문제**
+- HWPX/HWP 파일 업로드 시 파일을 AI로 요약하는 `/summarize/stream` API의 성능이 텍스트 10000자 기준으로 (3회 테스트 기준) 평균 5분 29.42초 소요되어 매우 느림
+
+**해결**
+- 텍스트가 10000자를 넘어가지 않는 경우는 토큰 비용이 그렇게 크지 않다 판단하여 전체 텍스트를 프롬프트로 전송하도록 처리
+
+```java
+@Component
+@RequiredArgsConstructor
+public class SummarizeFileCache {
+
+    private final StringRedisTemplate redisTemplate;
+    private static final String CACHE_KEY_PREFIX = "file:filtered:text:";
+    private static final Duration CACHE_TTL = Duration.ofDays(7);
+
+    public String get(String fileHash) {
+        return redisTemplate.opsForValue().get(CACHE_KEY_PREFIX + fileHash);
+    }
+
+    public void put(String fileHash, String filteredText) {
+        redisTemplate.opsForValue().set(CACHE_KEY_PREFIX + fileHash, filteredText, CACHE_TTL);
+    }
+}
+```
+
+- 사용자가 동일한 파일 재업로드하는 경우 대응
+  * 파일 해시(SHA-256)를 키로 사용해 필터링 텍스트를 Redis에 캐싱, 동일 파일 재업로드시 중복 필터링 프로세스 건너뛰고 캐싱 결과 반환하도록 처리
+
+- 벡터 기반 유사성 비교에서는 각 `Document` 비교마다 `vectorStore.similaritySearch()` OpenAI Embedding API 를 호출하여 큰 성능 저하 발생
+  * 임베딩 데이터는 문서 데이터 기준으로 한 번에 배치 호출로 생성, `vectorStore.similaritySearch()`를 호출하는 대신 로컬에서 코사인 유사도 계산하도록 변경
+
+## 테스트 결과
+
+| 테스트 회차 | 적용 전 | 적용 후 | 개선율 |
+|------------|----------------|----------------|--------|
+| 1차 | 327.7초 | 8.9초 | 97.3% |
+| 2차 | 346.3초 | 4.9초 | 98.6% |
+| 3차 | 314.2초 | 3.8초 | 98.8% |
+
+## 요약 처리 시간 개선 요약
+
+| 구분 | 개선 전 | 개선 후 | 개선 효과 |
+|------|---------|---------|-----------|
+| 평균 처리 시간 | 329.4초 (5분 29초) | 5.9초 | 98.2% 개선 |
+| 최소 처리 시간 | 314.2초 (5분 14초) | 3.8초 | 98.8% 개선 |
+| 최대 처리 시간 | 346.3초 (5분 46초) | 8.9초 | 97.3% 개선 |
+
 ---
 
 ## 5. 아쉬운 점 및 추후 보완점
@@ -215,12 +264,6 @@ const SidebarList = () => {
 - 향후 개선 방향:
   - 커스텀 추출 유틸리티 구현을 통해 테이블, 차트 등의 데이터 유형을 명시적으로 태깅
   - 구조화된 메타데이터와 함께 추출하여 AI의 문서 이해도 및 답변 정확도 향상
-
-**벡터 DB 기반 RAG 구현 보류**
-- 당초 한글 문서 업로드 시 임베딩 기반 유사도 검색을 통해 관련 청크만 벡터 DB에 저장하고, 이를 활용한 RAG 방식의 채팅 구현을 계획했으나 다음 이슈로 인해 보류:
-  1. **초기 업로드 성능 저하**: 문서 임베딩 처리 과정에서 발생하는 지연으로 사용자 경험 저하
-  2. **할루시네이션 문제**: 청크 기반 컨텍스트 제공 시 AI가 불완전한 정보로 부정확한 답변 생성
-- 현재는 문서 전체를 컨텍스트로 제공하는 방식을 사용 중이나, 이로 인한 토큰 소비량 증가 문제 존재. 차후 해결 방안을 모색할 필요가 있음.
 
 ---
 
