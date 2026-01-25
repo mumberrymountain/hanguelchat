@@ -236,7 +236,7 @@ public class SummarizeFileCache {
 - 사용자가 동일한 파일 재업로드하는 경우 대응
   * 파일 해시(SHA-256)를 키로 사용해 필터링 텍스트를 Redis에 캐싱, 동일 파일 재업로드시 중복 필터링 프로세스 건너뛰고 캐싱 결과 반환하도록 처리
 
-- 벡터 기반 유사성 비교에서는 각 `Document` 비교마다 `vectorStore.similaritySearch()` OpenAI Embedding API 를 호출하여 큰 성능 저하 발생
+- 벡터 기반 유사성 비교에서는 각 `Document` 비교마다 `vectorStore.similaritySearch()` OpenAI Embedding API 를 호출하여 극심한 성능 저하 발생
   * 임베딩 데이터는 문서 데이터 기준으로 한 번에 배치 호출로 생성, `vectorStore.similaritySearch()`를 호출하는 대신 로컬에서 코사인 유사도 계산하도록 변경
 
 ## 테스트 결과
