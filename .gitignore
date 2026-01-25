@@ -46,5 +46,4 @@ logs/
 
 # Kubernetes
 *.kubeconfig
-k8s/dev/*-secret.yaml
-
+infrastructure/k8s/dev/*-secret.yaml

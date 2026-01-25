@@ -1,10 +1,7 @@
--- 사용자 생성 및 권한 부여 (모든 호스트에서 접근 가능하도록)
--- MySQL 8.0에서는 CREATE USER와 GRANT를 분리해야 함
 CREATE USER IF NOT EXISTS 'hangeul_user'@'%' IDENTIFIED BY '123456789';
 GRANT ALL PRIVILEGES ON hangeul_chat.* TO 'hangeul_user'@'%';
 FLUSH PRIVILEGES;
 
--- User 테이블 (회원 정보)
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -14,8 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Thread 테이블 (채팅 스레드/대화)
--- UUID (현재 threadId와 동일)
 CREATE TABLE IF NOT EXISTS threads (
     id VARCHAR(36) PRIMARY KEY COMMENT 'UUID (현재 threadId와 동일)',
     user_id BIGINT NOT NULL,
@@ -30,7 +25,6 @@ CREATE TABLE IF NOT EXISTS threads (
     INDEX idx_created_at (created_at)
 );
 
--- ChatMessage 테이블 (개별 메시지)
 CREATE TABLE IF NOT EXISTS chat_messages (
     id VARCHAR(36) PRIMARY KEY COMMENT 'UUID',
     thread_id VARCHAR(36) NOT NULL,
