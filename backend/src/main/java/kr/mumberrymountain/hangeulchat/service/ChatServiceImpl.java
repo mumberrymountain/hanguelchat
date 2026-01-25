@@ -28,7 +28,6 @@ public class ChatServiceImpl implements ChatService {
     private final DocumentStore documentStore;
     private final ChatClientFactory chatClientFactory;
     private final SummarizeFileCache summarizeFileCache;
-    private HangeulTextExtractor hangeulTextExtractor;
 
 
     @SneakyThrows
@@ -77,10 +76,12 @@ public class ChatServiceImpl implements ChatService {
 
     @SneakyThrows
     private String extractTextFromFile(File file, String threadId, String apiKey) {
-        switch (FilenameUtils.getExtension(file.getName())) {
-            case "hwpx" -> hangeulTextExtractor = new HwpxTextExtractor();
-            case "hwp" -> hangeulTextExtractor = new HwpTextExtractor();
-        }
+        String extension = FilenameUtils.getExtension(file.getName());
+        HangeulTextExtractor hangeulTextExtractor = switch (extension) {
+            case "hwpx" -> new HwpxTextExtractor();
+            case "hwp" -> new HwpTextExtractor();
+            default -> throw new IllegalArgumentException(extension + " is not supported");
+        };
 
         String text = hangeulTextExtractor.extract(file);
         if (text.length() > 10000) text = duplicatedChunkFilter.filter(text, file.getName(), apiKey);
