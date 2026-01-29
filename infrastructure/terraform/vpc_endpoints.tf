@@ -24,7 +24,7 @@ resource "aws_vpc_security_group_egress_rule" "vpc_endpoint_all" {
 
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.ap-northeast-2.ssm"
+  service_name        = "com.amazonaws.${var.aws_region}.ssm"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [aws_subnet.private.id]
   security_group_ids  = [aws_security_group.vpc_endpoint.id]
@@ -37,7 +37,7 @@ resource "aws_vpc_endpoint" "ssm" {
 
 resource "aws_vpc_endpoint" "ssm_messages" {
   vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.ap-northeast-2.ssmmessages"
+  service_name        = "com.amazonaws.${var.aws_region}.ssmmessages"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [aws_subnet.private.id]
   security_group_ids  = [aws_security_group.vpc_endpoint.id]
@@ -50,7 +50,7 @@ resource "aws_vpc_endpoint" "ssm_messages" {
 
 resource "aws_vpc_endpoint" "ec2_messages" {
   vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.ap-northeast-2.ec2messages"
+  service_name        = "com.amazonaws.${var.aws_region}.ec2messages"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [aws_subnet.private.id]
   security_group_ids  = [aws_security_group.vpc_endpoint.id]

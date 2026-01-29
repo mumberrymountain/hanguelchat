@@ -9,6 +9,11 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = [aws_security_group.ec2.id]
   iam_instance_profile   = data.aws_iam_instance_profile.ec2.name
 
+  metadata_options {
+    http_tokens   = "required"
+    http_endpoint = "enabled"
+  }
+
   depends_on = [aws_nat_gateway.main]
 
   user_data = file("${path.module}/scripts/ec2-init.sh")
