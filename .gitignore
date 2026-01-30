@@ -47,3 +47,11 @@ logs/
 # Kubernetes
 *.kubeconfig
 infrastructure/k8s/dev/*-secret.yaml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+*.tfvars
+!terraform.tfvars.example
