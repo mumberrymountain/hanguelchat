@@ -62,9 +62,9 @@ variable "acm_certificate_arn" {
 }
 
 variable "target_group_port" {
-  description = "Target Group 포트"
+  description = "Target Group 포트 (nginx Ingress Controller NodePort와 일치해야 함)"
   type        = number
-  default     = 80
+  default     = 30080
 }
 
 variable "ec2_iam_role_name" {
