@@ -71,3 +71,15 @@ variable "ec2_iam_role_name" {
   description = "EC2 인스턴스에 연결할 기존 IAM Instance Profile 이름 (일반적으로 IAM 역할 이름과 동일)"
   type        = string
 }
+
+variable "ebs_volume_size" {
+  description = "EBS 볼륨 크기 (GB)"
+  type        = number
+  default     = 20
+}
+
+variable "ebs_volume_type" {
+  description = "EBS 볼륨 타입"
+  type        = string
+  default     = "gp3"
+}

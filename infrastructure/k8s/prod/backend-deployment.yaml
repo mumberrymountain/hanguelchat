@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: hangeul-chat-backend
-          image: hangeul-chat-backend
-          imagePullPolicy: IfNotPresent
+          image: infrastructure-backend:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 9090
           envFrom:
