@@ -62,12 +62,24 @@ variable "acm_certificate_arn" {
 }
 
 variable "target_group_port" {
-  description = "Target Group 포트"
+  description = "Target Group 포트 (nginx Ingress Controller NodePort와 일치해야 함)"
   type        = number
-  default     = 80
+  default     = 30080
 }
 
 variable "ec2_iam_role_name" {
   description = "EC2 인스턴스에 연결할 기존 IAM Instance Profile 이름 (일반적으로 IAM 역할 이름과 동일)"
   type        = string
+}
+
+variable "ebs_volume_size" {
+  description = "EBS 볼륨 크기 (GB)"
+  type        = number
+  default     = 20
+}
+
+variable "ebs_volume_type" {
+  description = "EBS 볼륨 타입"
+  type        = string
+  default     = "gp3"
 }

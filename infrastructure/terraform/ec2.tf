@@ -14,6 +14,21 @@ resource "aws_instance" "main" {
     http_endpoint = "enabled"
   }
 
+  root_block_device {
+    volume_size           = 20
+    volume_type           = "gp3"
+    encrypted             = true
+    delete_on_termination = true
+  }
+
+  ebs_block_device {
+    device_name           = "/dev/sdf"
+    volume_size           = var.ebs_volume_size
+    volume_type           = var.ebs_volume_type
+    encrypted             = true
+    delete_on_termination = false
+  }
+
   depends_on = [aws_nat_gateway.main]
 
   user_data = file("${path.module}/scripts/ec2-init.sh")

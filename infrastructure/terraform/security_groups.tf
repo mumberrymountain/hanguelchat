@@ -50,6 +50,15 @@ resource "aws_vpc_security_group_ingress_rule" "ec2_http" {
   ip_protocol                  = "tcp"
 }
 
+# nginx Ingress Controller NodePort (30080) 허용
+resource "aws_vpc_security_group_ingress_rule" "ec2_nginx_nodeport" {
+  security_group_id            = aws_security_group.ec2.id
+  referenced_security_group_id = aws_security_group.alb.id
+  from_port                    = 30080
+  to_port                      = 30080
+  ip_protocol                  = "tcp"
+}
+
 /*
 resource "aws_vpc_security_group_ingress_rule" "ec2_https" {
   security_group_id            = aws_security_group.ec2.id
