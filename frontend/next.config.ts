@@ -29,6 +29,7 @@ const nextConfig: NextConfig = {
           simplify: true,
           splitStrings: false,
           transformObjectKeys: false,
+          reservedNames: ['crypto', 'randomUUID'],
         }, ['**/node_modules/**'])
       );
     }
