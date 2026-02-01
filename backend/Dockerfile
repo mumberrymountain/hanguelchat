@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew bootJar
+RUN chmod +x gradlew && ./gradlew bootJar
 
 FROM azul/zulu-openjdk-alpine:21-latest
 

@@ -83,3 +83,9 @@ variable "ebs_volume_type" {
   type        = string
   default     = "gp3"
 }
+
+variable "nat_instance_type" {
+  description = "NAT 인스턴스 타입 (비용 절감을 위해 작은 인스턴스 권장)"
+  type        = string
+  default     = "t3.nano"
+}

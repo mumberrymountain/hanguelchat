@@ -29,7 +29,7 @@ resource "aws_instance" "main" {
     delete_on_termination = true
   }
 
-  depends_on = [aws_nat_gateway.main]
+  depends_on = [aws_instance.nat, aws_eip.nat_instance]
 
   user_data = file("${path.module}/scripts/ec2-init.sh")
 
