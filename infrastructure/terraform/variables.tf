@@ -68,7 +68,7 @@ variable "target_group_port" {
 }
 
 variable "ec2_iam_role_name" {
-  description = "EC2 인스턴스에 연결할 기존 IAM Instance Profile 이름 (일반적으로 IAM 역할 이름과 동일)"
+  description = "EC2 인스턴스에 연결할 IAM 프로필"
   type        = string
 }
 
@@ -85,7 +85,7 @@ variable "ebs_volume_type" {
 }
 
 variable "nat_instance_type" {
-  description = "NAT 인스턴스 타입 (비용 절감을 위해 작은 인스턴스 권장)"
+  description = "NAT 인스턴스 타입"
   type        = string
   default     = "t3.nano"
 }
