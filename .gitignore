@@ -47,6 +47,7 @@ logs/
 # Kubernetes
 *.kubeconfig
 infrastructure/k8s/dev/*-secret.yaml
+infrastructure/k8s/prod/*-secret.yaml
 
 # Terraform
 *.tfstate

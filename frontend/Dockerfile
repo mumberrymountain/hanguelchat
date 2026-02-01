@@ -6,6 +6,11 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+# 빌드 시점에 환경변수 설정 (NEXT_PUBLIC_ 변수는 빌드 타임에 인라인됨)
+ARG NEXT_PUBLIC_CHAT_API_URL=/api
+ENV NEXT_PUBLIC_CHAT_API_URL=${NEXT_PUBLIC_CHAT_API_URL}
+
 RUN npm run build
 
 FROM node:20-alpine AS runner
