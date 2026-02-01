@@ -26,7 +26,7 @@ resource "aws_instance" "main" {
     volume_size           = var.ebs_volume_size
     volume_type           = var.ebs_volume_type
     encrypted             = true
-    delete_on_termination = false
+    delete_on_termination = true
   }
 
   depends_on = [aws_nat_gateway.main]
