@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
 EBS_MOUNT_PATH="/mnt/data"
 
 find_ebs_device() {
@@ -66,7 +68,35 @@ systemctl start docker
 
 usermod -aG docker ubuntu
 
+# ==========================================
+# Kubernetes 사전 요구사항
+# ==========================================
+
+# Swap 비활성화 (Kubernetes 필수)
+swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+# 커널 모듈 로드
+cat <<EOF | tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+modprobe overlay
+modprobe br_netfilter
+
+# sysctl 네트워크 설정 (Kubernetes 필수)
+cat <<EOF | tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sysctl --system
+
+# ==========================================
 # Kubernetes 설치 (kubeadm, kubelet, kubectl)
+# ==========================================
 KUBERNETES_VERSION="${KUBERNETES_VERSION:-1.30.0-00}"
 
 # containerd 설정 (Kubernetes가 사용)
@@ -87,21 +117,32 @@ apt-mark hold kubelet kubeadm kubectl
 # Calico 사용 시 pod-network-cidr=192.168.0.0/16 권장
 kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4) --ignore-preflight-errors=NumCPU
 
-# kubectl 설정
+# kubectl 설정 (root)
+mkdir -p /root/.kube
+cp -i /etc/kubernetes/admin.conf /root/.kube/config
+
+# kubectl 설정 (ubuntu 사용자)
 mkdir -p /home/ubuntu/.kube
 cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 chown -R ubuntu:ubuntu /home/ubuntu/.kube
 
-# root 사용자도 kubectl 사용 가능하도록 설정
-mkdir -p /root/.kube
-cp -i /etc/kubernetes/admin.conf /root/.kube/config
+# API 서버가 준비될 때까지 대기
+echo "API 서버 준비 대기 중..."
+until kubectl get nodes &>/dev/null; do
+  echo "Waiting for API server..."
+  sleep 5
+done
+echo "API 서버 준비 완료!"
 
 # Calico CNI 설치 (Flannel 대신 - 더 안정적)
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
 
-# 클러스터가 준비될 때까지 대기
-echo "Kubernetes 클러스터 초기화 중... 잠시 기다려주세요."
+# Calico가 배포될 때까지 대기
+echo "Calico CNI 배포 대기 중..."
+kubectl -n kube-system wait --for=condition=Available deployment/calico-kube-controllers --timeout=300s || true
 sleep 30
+
+# 노드 상태 확인
 kubectl get nodes
 
 # 단일 노드 클러스터이므로 master 노드에 pod 스케줄링 허용 (CNI 설치 후 실행)
@@ -132,6 +173,11 @@ kubectl wait --for=condition=Ready pods -l app=local-path-provisioner -n local-p
 kubectl patch configmap local-path-config -n local-path-storage --type=merge -p '{"data":{"config.json":"{\"nodePathMap\":[{\"node\":\"DEFAULT_PATH_FOR_NON_LISTED_NODES\",\"paths\":[\"/mnt/data\"]}]}"}}'
 kubectl rollout restart deployment local-path-provisioner -n local-path-storage
 kubectl wait --for=condition=Ready pods -l app=local-path-provisioner -n local-path-storage --timeout=120s
+
+NERDCTL_VERSION="1.7.0"
+curl -sSL "https://github.com/containerd/nerdctl/releases/download/v${NERDCTL_VERSION}/nerdctl-${NERDCTL_VERSION}-linux-amd64.tar.gz" | tar -xz -C /usr/local/bin
+chmod +x /usr/local/bin/nerdctl
+nerdctl --version
 
 # nginx Ingress Controller 설치
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
