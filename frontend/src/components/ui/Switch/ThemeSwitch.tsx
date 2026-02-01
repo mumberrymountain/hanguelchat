@@ -23,7 +23,7 @@ const ThemeSwitch = () => {
             <Switch 
                 checked={theme === 'light'}
                 onChange={toggleThemeSwitch} 
-                className="me-4 group relative inline-flex h-7 w-16 items-center rounded-md bg-gray-700 border border-gray-600 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-600 hover:border-gray-500 data-[checked]:bg-violet-800 data-[checked]:border-violet-700 data-[checked]:hover:bg-violet-900"
+                className="cursor-pointer me-4 group relative inline-flex h-7 w-16 items-center rounded-md bg-gray-700 border border-gray-600 transition-all duration-200 shadow-sm hover:shadow-md hover:bg-gray-600 hover:border-gray-500 data-[checked]:bg-violet-800 data-[checked]:border-violet-700 data-[checked]:hover:bg-violet-900"
             >
                 <Moon size={12} className="absolute start-1.5 text-gray-400 transition-opacity duration-200 group-data-[checked]:opacity-30"/>
                 <Sun size={12} className="absolute end-1.5 text-yellow-400 transition-opacity duration-200 opacity-30 group-data-[checked]:opacity-100"/>

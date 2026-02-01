@@ -235,7 +235,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className={`w-full py-3 rounded-md font-medium transition-colors ${customTheme.authModal?.submitButton || 'bg-purple-600 hover:bg-purple-700 text-white disabled:bg-gray-400'}`}
+                        className={`cursor-pointer w-full py-3 rounded-md font-medium transition-colors ${customTheme.authModal?.submitButton || 'bg-purple-600 hover:bg-purple-700 text-white disabled:bg-gray-400'}`}
                     >
                         {isLoading ? t('loading') : mode === 'signup' ? t('signup') : t('login')}
                     </button>
@@ -251,7 +251,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                                 setMode(mode === 'login' ? 'signup' : 'login');
                                 setFormData({ username: '', email: '', password: '' });
                             }}
-                            className={`ml-2 text-sm font-medium ${customTheme.authModal?.toggleLink || 'text-purple-600 hover:text-purple-700'}`}
+                            className={`cursor-pointer ml-2 text-sm font-medium ${customTheme.authModal?.toggleLink || 'text-purple-600 hover:text-purple-700'}`}
                         >
                             {mode === 'login' ? t('signup') : t('login')}
                         </button>

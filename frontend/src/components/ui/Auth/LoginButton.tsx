@@ -14,7 +14,7 @@ export default function LoginButton() {
         <>
             <button
                 onClick={() => setIsModalOpen(true)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${customTheme.loginButton?.button || 'bg-purple-600 hover:bg-purple-700 text-white'}`}
+                className={`cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${customTheme.loginButton?.button || 'bg-purple-600 hover:bg-purple-700 text-white'}`}
             >
                 <LogIn className="w-4 h-4" />
                 {t('login')}
