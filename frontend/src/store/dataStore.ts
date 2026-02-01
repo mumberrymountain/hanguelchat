@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import ThreadState from '@/types/ThreadState';
 import ThreadItem from '@/types/ThreadItem';
+import { generateUUID } from '@/lib/util/common';
 
 /*
 기본 데이터 모델
@@ -34,7 +35,7 @@ export const useThreadStore = create<ThreadState>((set, get) => ({
   setIsLoading: (loading) => set({ isLoading: loading }),
   
   addThread: (thread, threadId?) => set((state) => {
-    const newThreadId = threadId ?? crypto.randomUUID();
+    const newThreadId = threadId ?? generateUUID();
     return {
       threads: [
         ...state.threads.map(t => ({ ...t, isActive: false })),
@@ -66,7 +67,7 @@ export const useThreadStore = create<ThreadState>((set, get) => ({
       thread.id === threadId
         ? {
             ...thread,
-            chatHistory: [...thread.chatHistory, { ...message, id: crypto.randomUUID() }]
+            chatHistory: [...thread.chatHistory, { ...message, id: generateUUID() }]
           }
         : thread
     )
@@ -74,7 +75,7 @@ export const useThreadStore = create<ThreadState>((set, get) => ({
 
   // 스트리밍 메시지 추가 (빈 메시지로 시작)
   addStreamingMessage: (threadId) => {
-    const messageId = crypto.randomUUID();
+    const messageId = generateUUID();
     set((state) => ({
       threads: state.threads.map(thread =>
         thread.id === threadId
