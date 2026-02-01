@@ -174,6 +174,32 @@ kubectl patch configmap local-path-config -n local-path-storage --type=merge -p 
 kubectl rollout restart deployment local-path-provisioner -n local-path-storage
 kubectl wait --for=condition=Ready pods -l app=local-path-provisioner -n local-path-storage --timeout=120s
 
+BUILDKIT_VERSION="0.13.0"
+curl -sSL "https://github.com/moby/buildkit/releases/download/v${BUILDKIT_VERSION}/buildkit-v${BUILDKIT_VERSION}.linux-amd64.tar.gz" | tar -xz -C /tmp
+mv /tmp/bin/buildctl /usr/local/bin/
+mv /tmp/bin/buildkitd /usr/local/bin/
+chmod +x /usr/local/bin/buildctl /usr/local/bin/buildkitd
+
+cat > /etc/systemd/system/buildkit.service << 'EOF'
+[Unit]
+Description=BuildKit
+Documentation=https://github.com/moby/buildkit
+After=containerd.service
+Requires=containerd.service
+
+[Service]
+ExecStart=/usr/local/bin/buildkitd --oci-worker=false --containerd-worker=true --containerd-worker-namespace=k8s.io
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable buildkit.service
+systemctl start buildkit.service
+
 NERDCTL_VERSION="1.7.0"
 curl -sSL "https://github.com/containerd/nerdctl/releases/download/v${NERDCTL_VERSION}/nerdctl-${NERDCTL_VERSION}-linux-amd64.tar.gz" | tar -xz -C /usr/local/bin
 chmod +x /usr/local/bin/nerdctl
