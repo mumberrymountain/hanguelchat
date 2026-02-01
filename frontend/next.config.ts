@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
           splitStrings: false,
           transformObjectKeys: false,
           reservedNames: ['crypto', 'randomUUID'],
+          reservedStrings: ['crypto', 'randomUUID'],
         }, ['**/node_modules/**'])
       );
     }
