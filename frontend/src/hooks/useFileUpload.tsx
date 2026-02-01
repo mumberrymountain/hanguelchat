@@ -29,6 +29,7 @@ export const useFileUpload = ({
             try{
                 await onFileProcess(file);
             } catch (e) {
+                console.error('Failed to process file:', e);
                 toast.error(locale('unknownServerException'))
             }
         })
