@@ -59,7 +59,6 @@ resource "aws_vpc_security_group_ingress_rule" "ec2_nginx_nodeport" {
   ip_protocol                  = "tcp"
 }
 
-/*
 resource "aws_vpc_security_group_ingress_rule" "ec2_https" {
   security_group_id            = aws_security_group.ec2.id
   referenced_security_group_id = aws_security_group.alb.id
@@ -67,7 +66,6 @@ resource "aws_vpc_security_group_ingress_rule" "ec2_https" {
   to_port                      = 443
   ip_protocol                  = "tcp"
 }
-*/
 
 resource "aws_vpc_security_group_egress_rule" "ec2_all" {
   security_group_id = aws_security_group.ec2.id
