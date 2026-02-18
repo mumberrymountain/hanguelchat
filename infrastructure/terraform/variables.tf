@@ -59,6 +59,7 @@ variable "ec2_ami" {
 variable "acm_certificate_arn" {
   description = "ACM 인증서 ARN"
   type        = string
+  sensitive   = true
 }
 
 variable "target_group_port" {
@@ -70,6 +71,7 @@ variable "target_group_port" {
 variable "ec2_iam_role_name" {
   description = "EC2 인스턴스에 연결할 IAM 프로필"
   type        = string
+  sensitive   = true
 }
 
 variable "ebs_volume_size" {
