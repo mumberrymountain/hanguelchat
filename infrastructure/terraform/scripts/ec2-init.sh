@@ -84,6 +84,24 @@ setup_docker() {
 }
 
 # ==========================================
+# AWS CLI v2 설치 (공식 설치 패키지)
+# https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+# ==========================================
+setup_aws_cli() {
+  echo "AWS CLI 설치 시작..."
+
+  apt-get install -y unzip
+
+  curl -sS "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+  unzip -q /tmp/awscliv2.zip -d /tmp
+  /tmp/aws/install
+  rm -rf /tmp/aws /tmp/awscliv2.zip
+
+  aws --version
+  echo "AWS CLI 설치 완료"
+}
+
+# ==========================================
 # Kubernetes 사전 요구사항 설정
 # ==========================================
 setup_k8s_prereqs() {
@@ -266,19 +284,22 @@ EOF
 main() {
   echo "=== EC2 초기화 시작 ==="
 
-  echo "[1/5] EBS 볼륨 마운트 중..."
+  echo "[1/6] EBS 볼륨 마운트 중..."
   setup_ebs
 
-  echo "[2/5] Docker 설치 중..."
+  echo "[2/6] Docker 설치 중..."
   setup_docker
 
-  echo "[3/5] Kubernetes 사전 요구사항 설정 중..."
+  echo "[3/6] AWS CLI 설치 중..."
+  setup_aws_cli
+
+  echo "[4/6] Kubernetes 사전 요구사항 설정 중..."
   setup_k8s_prereqs
 
-  echo "[4/5] Kubernetes 설치 및 초기화 중..."
+  echo "[5/6] Kubernetes 설치 및 초기화 중..."
   setup_k8s
 
-  echo "[5/5] 추가 도구 설치 중..."
+  echo "[6/6] 추가 도구 설치 중..."
   setup_tools
 
   # 불필요한 캐시 정리 (디스크 공간 확보)
