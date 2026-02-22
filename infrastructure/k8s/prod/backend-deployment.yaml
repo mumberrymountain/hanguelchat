@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: hangeul-chat-backend
-          image: infrastructure-backend:latest
-          imagePullPolicy: Never
+          image: 942883569368.dkr.ecr.ap-northeast-2.amazonaws.com/hangeul-chat-backend
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9090
           envFrom:
