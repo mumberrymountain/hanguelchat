@@ -263,11 +263,14 @@ EOF
   helm repo update
 
   # nginx Ingress Controller를 NodePort 타입으로 설치
+  # ALB 뒤에서 실제 클라이언트 IP 인식: use-forwarded-headers, proxy-real-ip-cidr (VPC 대역)
   helm install ingress-nginx ingress-nginx/ingress-nginx \
     --namespace ingress-nginx \
     --create-namespace \
     --set controller.service.type=NodePort \
     --set controller.service.nodePorts.http=30080 \
+    --set controller.config.use-forwarded-headers="true" \
+    --set controller.config.proxy-real-ip-cidr="10.0.0.0/8" \
     --wait \
     --timeout 5m
 
@@ -283,11 +286,21 @@ EOF
   echo "ArgoCD 배포 대기 중..."
   kubectl wait --for=condition=Available deployment/argocd-server -n argocd --timeout=300s || true
 
-  # 경로 기반 Ingress(/argoCD)용 rootpath 및 insecure 모드 설정
-  kubectl patch deployment argocd-server -n argocd --type='json' -p='[
-    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure"},
-    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--rootpath=/argoCD"}
-  ]' || true
+  # 경로 기반 Ingress(/argoCD)용 설정: insecure + rootpath + basehref
+  kubectl apply -f - <<'ARGOCD_CM'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  server.insecure: "true"
+  server.rootpath: "/argoCD"
+  server.basehref: "/argoCD"
+ARGOCD_CM
+
+  kubectl rollout restart deployment argocd-server -n argocd
+  kubectl wait --for=condition=Available deployment/argocd-server -n argocd --timeout=300s || true
 
   echo "ArgoCD 설치 완료"
 
