@@ -275,6 +275,22 @@ EOF
   kubectl get pods -n ingress-nginx
   kubectl get svc -n ingress-nginx
 
+  # ArgoCD 설치
+  echo "ArgoCD 설치 중..."
+  kubectl create namespace argocd
+  kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+  echo "ArgoCD 배포 대기 중..."
+  kubectl wait --for=condition=Available deployment/argocd-server -n argocd --timeout=300s || true
+
+  # 경로 기반 Ingress(/argoCD)용 rootpath 및 insecure 모드 설정
+  kubectl patch deployment argocd-server -n argocd --type='json' -p='[
+    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure"},
+    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--rootpath=/argoCD"}
+  ]' || true
+
+  echo "ArgoCD 설치 완료"
+
   echo "추가 도구 설치 완료"
 }
 
