@@ -142,7 +142,26 @@ terraform apply
 
 ---
 
-## 4. 겪은 문제
+## 4. CI/CD
+
+<img width="2356" height="445" alt="Image" src="https://github.com/user-attachments/assets/e7472588-5584-4ca5-8ce5-f2e78c5ab108" />
+
+### CI (GitHub Actions)
+
+- **트리거**: `main` 브랜치 push (경로별)
+  - `frontend/**` 또는 워크플로 변경 시 → 프론트엔드 이미지 빌드·푸시
+  - `backend/**` 또는 워크플로 변경 시 → 백엔드 이미지 빌드·푸시
+- **흐름**: Checkout → AWS 인증 → ECR 로그인 → Docker 빌드·태그(`github.sha`) → ECR 푸시
+- **워크플로**: `.github/workflows/frontend-ecr-push.yml`, `.github/workflows/backend-ecr-push.yml`
+- **필요 시크릿**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+
+### CD (ArgoCD)
+
+- ArgoCD로 Kubernetes 클러스터와 매니페스트 동기화.
+
+---
+
+## 5. 겪은 문제
 
 ### 스레드와 채팅이 많을 때 렌더링 성능 문제 
 
@@ -320,7 +339,7 @@ public class SummarizeFileCache {
 
 ---
 
-## 5. 아쉬운 점 및 추후 보완점
+## 6. 아쉬운 점 및 추후 보완점
 
 **테이블, 차트 등 구조화된 데이터 인식 개선 필요**
 - 현재 한글 문서(.hwpx) 데이터 추출 시 `hwpxlib`의 `TextExtractor`를 사용 중이나, 테이블과 차트의 구조 정보가 정확히 추출되지 않아 AI가 컨텍스트를 정확히 파악하기 어려운 한계 존재
@@ -336,7 +355,7 @@ public class SummarizeFileCache {
 
 ---
 
-## 6. 성과
+## 7. 성과
 
 ### 기술적 성과
 
