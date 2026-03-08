@@ -163,7 +163,26 @@ terraform apply
 
 ---
 
-## 5. 겪은 문제
+## 5. 쿠버네티스 구조
+
+<img width="770" height="392" alt="Image" src="https://github.com/user-attachments/assets/ffa1fee6-3893-4968-bf1b-755996ac5a98" />
+
+- EC2 위에 Kubernetes 클러스터 직접 구축. Backend/Frontend는 Deployment로 각 3 replicas 배포해 단일 파드 장애에 대비.
+- startupProbe, livenessProbe, readinessProbe로 파드 헬스체크.
+- NGINX Ingress Controller로 경로 기반 라우팅.
+
+| 구분 | 리소스 | 설명 |
+|------|--------|------|
+| Deployment | backend-deployment, frontend-deployment | 백엔드/프론트엔드 (ReplicaSet → Pod) |
+| | mysql-deployment, redis-deployment | MySQL(MariaDB), Redis |
+| | nginx-ingress-controller | 인그레스 컨트롤러 |
+| Service | backend-service, frontend-service, mysql, redis | 클러스터 내부 서비스 |
+| Ingress | hangeul-chat-ingress | 경로 기반 HTTP/HTTPS 라우팅 |
+| ConfigMap | nginx-ingress-controller-config | NGINX 인그레스 설정 |
+
+---
+
+## 6. 겪은 문제
 
 ### 스레드와 채팅이 많을 때 렌더링 성능 문제 
 
@@ -341,7 +360,7 @@ public class SummarizeFileCache {
 
 ---
 
-## 6. 아쉬운 점 및 추후 보완점
+## 8. 아쉬운 점 및 추후 보완점
 
 **테이블, 차트 등 구조화된 데이터 인식 개선 필요**
 - 현재 한글 문서(.hwpx) 데이터 추출 시 `hwpxlib`의 `TextExtractor`를 사용 중이나, 테이블과 차트의 구조 정보가 정확히 추출되지 않아 AI가 컨텍스트를 정확히 파악하기 어려운 한계 존재
