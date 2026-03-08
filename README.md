@@ -87,6 +87,61 @@
 
 ---
 
+## 3. Terraform IaC 구성
+
+### 아키텍처 개요
+
+<img width="434" height="920" alt="Image" src="https://github.com/user-attachments/assets/d36161d0-5d47-454b-b81c-f0b1a5a0d315" />
+
+### 구성 요소 및 역할
+
+| 구분 | 구성 요소 | 설명 | Terraform 리소스 |
+|------|-----------|------|------------------|
+| **입구** | Route 53 (DNS) | 도메인 요청 및 DNS 라우팅 | AWS 콘솔로 생성 및 관리 |
+| | ACM | SSL/TLS 인증서 (ALB에 적용) | AWS 콘솔로 생성 및 관리, `var.acm_certificate_arn`에서 참고 |
+| **네트워크** | VPC | 가상 프라이빗 클라우드, 다중 AZ 기반 | `aws_vpc.main` |
+| | Internet Gateway | VPC ↔ 인터넷 통신 | `aws_internet_gateway.main` |
+| | 퍼블릭 서브넷 (AZ-A, AZ-B) | ALB 배치, 외부 접근 가능 | `aws_subnet.public`, `aws_subnet.public_2` |
+| | 프라이빗 서브넷 | EC2·NAT 배치, 직접 외부 접근 차단 | `aws_subnet.private` |
+| **로드 밸런싱** | ALB (HTTP/HTTPS) | - 다중 AZ 트래픽 분산 <br/> - 80→443 리다이렉트 <br/> - ACM 인증서 적용 | `aws_lb.main`, `aws_lb_listener.*` |
+| **애플리케이션** | EC2 인스턴스 (메인 서버) | - 프라이빗 서브넷에서 앱 실행 <br/> - IMDSv2·EBS 암호화 적용 | `aws_instance.main` |
+| **아웃바운드** | NAT 인스턴스 + EIP | - 프라이빗 서브넷의 아웃바운드 인터넷 접근을 위한 NAT 인스턴스 | `aws_instance.nat`, `aws_eip.nat_instance` |
+| **관리 접근** | VPC Endpoints (SSM, SSM Messages, EC2 Messages) | 프라이빗 서브넷에서 SSM 세션 매니저 등 AWS 서비스 접근 | `aws_vpc_endpoint.*` |
+| **보안** | Security Groups | 리소스별 트래픽 인/아웃바운드 제어 | `security_groups.tf` |
+
+### 트래픽 흐름
+
+1. **인바운드**: 도메인 요청 → Route 53 → IGW → **ALB**(퍼블릭 서브넷) → 프라이빗 서브넷의 **EC2** (타깃 그룹).
+2. **아웃바운드**: 프라이빗 서브넷 EC2 → **NAT 인스턴스** → 인터넷.
+3. **관리**: EC2 ↔ **VPC 엔드포인트(SSM)** 를 통한 SSM 접근 (퍼블릭 IP 불필요).
+
+### Terraform 파일 구성
+
+| 파일 | 역할 |
+|------|------|
+| `main.tf` | Provider, 버전 |
+| `vpc.tf` | VPC, 서브넷, IGW, 라우트, NAT EIP |
+| `alb.tf` | ALB, 타깃 그룹, HTTP/HTTPS 리스너 |
+| `ec2.tf` | EC2 (프라이빗, EBS 암호화, IMDSv2) |
+| `nat_instance.tf` | NAT 인스턴스 (iptables, 퍼블릭) |
+| `security_groups.tf` | 보안 그룹 (ALB, EC2, NAT, 엔드포인트) |
+| `vpc_endpoints.tf` | VPC 엔드포인트 (SSM, SSM Messages, EC2 Messages) |
+| `variables.tf` | 변수 (리전, CIDR, AMI, ACM, IAM 등) |
+| `backend.tf` | Terraform State S3 백엔드 관리 |
+
+### 실행
+
+- **유의사항**: `terraform.tfvars` 파일이 없으면 실행이 불가함.
+
+```bash
+cd infrastructure/terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+---
+
 ## 4. 겪은 문제
 
 ### 스레드와 채팅이 많을 때 렌더링 성능 문제 
