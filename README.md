@@ -157,6 +157,8 @@ terraform apply
 
 ### CD (ArgoCD)
 
+<img width="864" height="474" alt="Image" src="https://github.com/user-attachments/assets/1fb154bb-f7f5-4967-b2c7-ad173b549190" />
+
 - ArgoCD로 Kubernetes 클러스터와 매니페스트 동기화.
 
 ---
