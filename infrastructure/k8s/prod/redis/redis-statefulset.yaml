@@ -1,4 +1,4 @@
-# Redis 파드 3개: redis-0 primary, redis-1·2 replica. 클라이언트는 Sentinel 경유(백엔드 env).
+# Redis 파드 2개: redis-0 primary, redis-1 replica. 클라이언트는 Sentinel 경유(백엔드 env).
 apiVersion: apps/v1
 kind: StatefulSet
 
@@ -35,11 +35,11 @@ spec:
               type: RuntimeDefault
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 50m
+              memory: 128Mi
             limits:
-              cpu: 500m
-              memory: 1Gi
+              cpu: 300m
+              memory: 768Mi
           ports:
             - name: redis
               containerPort: 6379

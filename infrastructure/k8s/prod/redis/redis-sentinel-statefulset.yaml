@@ -1,4 +1,4 @@
-# quorum=2, 초기 모니터 대상은 redis-0. 페일오버 시 Sentinel이 새 master를 앱에 알려줌.
+# Sentinel 2개·quorum=1 (소규모 노드 부담 완화). 프로덕션 HA는 3+·quorum 2 권장.
 apiVersion: apps/v1
 kind: StatefulSet
 
@@ -7,7 +7,7 @@ metadata:
 
 spec:
   serviceName: redis-sentinel-headless
-  replicas: 3
+  replicas: 2
   podManagementPolicy: Parallel
   selector:
     matchLabels:
@@ -34,11 +34,11 @@ spec:
               type: RuntimeDefault
           resources:
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 30m
+              memory: 48Mi
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: 150m
+              memory: 192Mi
           ports:
             - name: sentinel
               containerPort: 26379
