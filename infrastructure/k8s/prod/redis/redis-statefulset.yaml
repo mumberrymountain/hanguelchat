@@ -17,15 +17,6 @@ spec:
       labels:
         app: hangeul-chat-redis
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app: hangeul-chat-redis
-                topologyKey: kubernetes.io/hostname
       securityContext:
         fsGroup: 1001
       containers:
@@ -99,7 +90,6 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        # 클러스터 default SC 사용 시 비울 수 있음. ec2-init 은 local-path 를 default 로 둠.
         storageClassName: local-path
         resources:
           requests:

@@ -17,20 +17,6 @@ spec:
       labels:
         app: hangeul-chat-redis-sentinel
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app: hangeul-chat-redis-sentinel
-              topologyKey: kubernetes.io/hostname
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app: hangeul-chat-redis-sentinel
       securityContext:
         fsGroup: 1001
       containers:
