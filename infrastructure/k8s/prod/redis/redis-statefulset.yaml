@@ -17,12 +17,38 @@ spec:
       labels:
         app: hangeul-chat-redis
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: hangeul-chat-redis
+                topologyKey: kubernetes.io/hostname
       securityContext:
         fsGroup: 1001
       containers:
         - name: redis
           image: docker.io/bitnamilegacy/redis:7.4.3-debian-12-r0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
           ports:
             - name: redis
               containerPort: 6379
@@ -35,6 +61,7 @@ spec:
             - |
               export REDIS_REPLICA_IP="${HOSTNAME}.redis-headless"
               export REDIS_REPLICA_PORT="6379"
+              : "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
               ORD="${HOSTNAME##*-}"
               if [[ "$ORD" == "0" ]]; then
                 export REDIS_REPLICATION_MODE=master
@@ -53,7 +80,7 @@ spec:
               command:
                 - /bin/bash
                 - -c
-                - /opt/bitnami/redis/bin/redis-cli -a "$REDIS_PASSWORD" ping
+                - REDISCLI_AUTH="$REDIS_PASSWORD" /opt/bitnami/redis/bin/redis-cli ping
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -62,7 +89,7 @@ spec:
               command:
                 - /bin/bash
                 - -c
-                - /opt/bitnami/redis/bin/redis-cli -a "$REDIS_PASSWORD" ping
+                - REDISCLI_AUTH="$REDIS_PASSWORD" /opt/bitnami/redis/bin/redis-cli ping
             initialDelaySeconds: 20
             periodSeconds: 5
             timeoutSeconds: 3
@@ -72,6 +99,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
+        # 클러스터 default SC 사용 시 비울 수 있음. ec2-init 은 local-path 를 default 로 둠.
         storageClassName: local-path
         resources:
           requests:

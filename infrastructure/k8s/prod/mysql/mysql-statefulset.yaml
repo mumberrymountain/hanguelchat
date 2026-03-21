@@ -16,12 +16,39 @@ spec:
       labels:
         app: hangeul-chat-mysql
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: hangeul-chat-mysql
+                topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 120
       securityContext:
         fsGroup: 1001
       containers:
         - name: mariadb
           image: docker.io/bitnamilegacy/mariadb:11.4.7-debian-12-r2
           imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
           ports:
             - name: mysql
               containerPort: 3306
@@ -37,6 +64,9 @@ spec:
                 export MARIADB_REPLICATION_MODE=master
               else
                 export MARIADB_REPLICATION_MODE=slave
+                : "${MARIADB_ROOT_PASSWORD:?MARIADB_ROOT_PASSWORD is required}"
+                : "${MARIADB_REPLICATION_USER:?MARIADB_REPLICATION_USER is required}"
+                : "${MARIADB_REPLICATION_PASSWORD:?MARIADB_REPLICATION_PASSWORD is required}"
                 export MARIADB_MASTER_HOST="mysql-0.mysql-headless"
                 export MARIADB_MASTER_PORT_NUMBER="3306"
                 export MARIADB_MASTER_ROOT_USER=root
