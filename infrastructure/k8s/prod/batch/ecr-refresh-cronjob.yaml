@@ -2,7 +2,7 @@
 # Runs with hostNetwork so the pod uses the node's IAM instance profile for ECR.
 #
 # First-time setup: create secret once (run job manually so you don't wait 10h):
-#   kubectl apply -f infrastructure/k8s/batch/
+#   kubectl apply -f infrastructure/k8s/prod/batch/
 #   kubectl create job --from=cronjob/ecr-refresh ecr-refresh-manual -n default
 # Then apply/restart frontend and backend deployments.
 apiVersion: batch/v1
