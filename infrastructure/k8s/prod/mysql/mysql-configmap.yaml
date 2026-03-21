@@ -1,3 +1,9 @@
+# 스키마 초기화 스크립트.
+# Bitnami MariaDB: initdb.d 는 데이터 디렉터리 최초 초기화 시 위주, startdb.d 의 .sh 는 컨테이너 시작마다 다시 실행될 수 있음.
+# 동일 init.sh 를 두 경로에 마운트하므로, INSERT·비멱등 DDL 이 있으면 재시작마다 실패할 수 있음 → IF NOT EXISTS 등 멱등만 사용.
+# 현재 내용: CREATE USER/TABLE IF NOT EXISTS, GRANT, FLUSH 만 있고 INSERT 없음.
+#
+# StatefulSet: 동일 ConfigMap 을 mysql-entrypoint-initdb / mysql-entrypoint-startdb 로 initdb.d·startdb.d 에 각각 마운트.
 apiVersion: v1
 kind: ConfigMap
 
@@ -8,19 +14,21 @@ data:
   init.sh: |
     #!/bin/bash
     set -e
-    
-    # 사용자 생성 및 권한 부여 (모든 호스트에서 접근 가능하도록)
-    # MySQL 8.0에서는 CREATE USER와 GRANT를 분리해야 함
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" <<EOF
-    CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
-    GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
+    # 멱등 유지: startdb.d 경로에서 컨테이너 재시작마다 재실행될 수 있음(IF NOT EXISTS / INSERT 금지).
+    # Bitnami: .sh 는 모든 노드에서 실행되므로 replica 에서는 스킵
+    if [[ "${MARIADB_REPLICATION_MODE:-}" == "slave" ]]; then
+      echo "Skipping app schema init on replica."
+      exit 0
+    fi
+
+    mysql -u root -p"$MARIADB_ROOT_PASSWORD" <<EOF
+    CREATE USER IF NOT EXISTS '$MARIADB_USER'@'%' IDENTIFIED BY '$MARIADB_PASSWORD';
+    GRANT ALL PRIVILEGES ON $MARIADB_DATABASE.* TO '$MARIADB_USER'@'%';
     FLUSH PRIVILEGES;
     EOF
-    
-    # 테이블 생성
-    mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" <<EOF
 
-    -- User 테이블 (회원 정보)
+    mysql -u root -p"$MARIADB_ROOT_PASSWORD" "$MARIADB_DATABASE" <<EOF
+
     CREATE TABLE IF NOT EXISTS users (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
@@ -30,8 +38,6 @@ data:
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
-    -- Thread 테이블 (채팅 스레드/대화)
-    -- UUID (현재 threadId와 동일)
     CREATE TABLE IF NOT EXISTS threads (
         id VARCHAR(36) PRIMARY KEY COMMENT 'UUID (현재 threadId와 동일)',
         user_id BIGINT NOT NULL,
@@ -46,7 +52,6 @@ data:
         INDEX idx_created_at (created_at)
     );
 
-    -- ChatMessage 테이블 (개별 메시지)
     CREATE TABLE IF NOT EXISTS chat_messages (
         id VARCHAR(36) PRIMARY KEY COMMENT 'UUID',
         thread_id VARCHAR(36) NOT NULL,
@@ -59,4 +64,3 @@ data:
         INDEX idx_timestamp (timestamp)
     );
     EOF
-

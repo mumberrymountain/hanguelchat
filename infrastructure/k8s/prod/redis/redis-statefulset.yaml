@@ -1,0 +1,78 @@
+# Redis 파드 3개: redis-0 primary, redis-1·2 replica. 클라이언트는 Sentinel 경유(백엔드 env).
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: redis
+
+spec:
+  serviceName: redis-headless
+  replicas: 3
+  podManagementPolicy: OrderedReady
+  selector:
+    matchLabels:
+      app: hangeul-chat-redis
+  template:
+    metadata:
+      labels:
+        app: hangeul-chat-redis
+    spec:
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: redis
+          image: docker.io/bitnami/redis:7.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: redis
+              containerPort: 6379
+          envFrom:
+            - secretRef:
+                name: redis-secret
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              export REDIS_REPLICA_IP="${HOSTNAME}.redis-headless"
+              export REDIS_REPLICA_PORT="6379"
+              ORD="${HOSTNAME##*-}"
+              if [[ "$ORD" == "0" ]]; then
+                export REDIS_REPLICATION_MODE=master
+              else
+                export REDIS_REPLICATION_MODE=slave
+                export REDIS_MASTER_HOST="redis-0.redis-headless"
+                export REDIS_MASTER_PORT_NUMBER="6379"
+                export REDIS_MASTER_PASSWORD="$REDIS_PASSWORD"
+              fi
+              exec /opt/bitnami/scripts/redis/entrypoint.sh /opt/bitnami/scripts/redis/run.sh
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/redis
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/bitnami/redis/bin/redis-cli -a "$REDIS_PASSWORD" ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/bitnami/redis/bin/redis-cli -a "$REDIS_PASSWORD" ping
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 5Gi

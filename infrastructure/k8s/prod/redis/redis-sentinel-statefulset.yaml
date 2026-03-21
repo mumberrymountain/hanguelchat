@@ -1,0 +1,72 @@
+# quorum=2, 초기 모니터 대상은 redis-0. 페일오버 시 Sentinel이 새 master를 앱에 알려줌.
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: redis-sentinel
+
+spec:
+  serviceName: redis-sentinel-headless
+  replicas: 3
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: hangeul-chat-redis-sentinel
+  template:
+    metadata:
+      labels:
+        app: hangeul-chat-redis-sentinel
+    spec:
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: redis-sentinel
+          image: docker.io/bitnami/redis-sentinel:7.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: sentinel
+              containerPort: 26379
+          env:
+            - name: REDIS_MASTER_HOST
+              value: redis-0.redis-headless
+            - name: REDIS_MASTER_PORT_NUMBER
+              value: "6379"
+            - name: REDIS_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_MASTER_SET
+              value: mymaster
+            - name: REDIS_SENTINEL_QUORUM
+              value: "2"
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              export REDIS_SENTINEL_ANNOUNCE_IP="${HOSTNAME}.redis-sentinel-headless"
+              exec /opt/bitnami/scripts/redis-sentinel/entrypoint.sh /opt/bitnami/scripts/redis-sentinel/run.sh
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/redis-sentinel
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - redis-cli -h 127.0.0.1 -p 26379 ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - redis-cli -h 127.0.0.1 -p 26379 ping
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 3
+      volumes:
+        - name: data
+          emptyDir: {}

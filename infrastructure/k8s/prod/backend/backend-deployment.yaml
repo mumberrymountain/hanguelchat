@@ -23,6 +23,20 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9090
+          env:
+            - name: SPRING_DATA_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: SPRING_DATA_REDIS_SENTINEL_MASTER
+              value: mymaster
+            - name: SPRING_DATA_REDIS_SENTINEL_NODES_0
+              value: redis-sentinel-0.redis-sentinel-headless:26379
+            - name: SPRING_DATA_REDIS_SENTINEL_NODES_1
+              value: redis-sentinel-1.redis-sentinel-headless:26379
+            - name: SPRING_DATA_REDIS_SENTINEL_NODES_2
+              value: redis-sentinel-2.redis-sentinel-headless:26379
           envFrom:
             - secretRef:
                 name: backend-secret
