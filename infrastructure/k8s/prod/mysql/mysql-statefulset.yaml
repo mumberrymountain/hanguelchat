@@ -100,7 +100,7 @@ spec:
                 - MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-admin ping -h 127.0.0.1 -uroot
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 30
+            failureThreshold: 10
           livenessProbe:
             exec:
               command:
