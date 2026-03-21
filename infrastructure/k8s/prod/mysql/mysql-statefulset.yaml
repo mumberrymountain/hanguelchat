@@ -18,6 +18,21 @@ spec:
     spec:
       securityContext:
         fsGroup: 1001
+      initContainers:
+        - name: check-mysql-secret
+          image: docker.io/busybox:1.36
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: mysql-secret
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              if [ -z "$MARIADB_ROOT_PASSWORD" ]; then echo "check-mysql-secret: MARIADB_ROOT_PASSWORD is empty"; exit 1; fi
+              if [ -z "$MARIADB_REPLICATION_PASSWORD" ]; then echo "check-mysql-secret: MARIADB_REPLICATION_PASSWORD is empty"; exit 1; fi
+              if [ -z "$MARIADB_PASSWORD" ]; then echo "check-mysql-secret: MARIADB_PASSWORD is empty"; exit 1; fi
       containers:
         - name: mariadb
           image: docker.io/bitnamilegacy/mariadb:11.4.7-debian-12-r2
@@ -48,12 +63,10 @@ spec:
               mountPath: /bitnami/mariadb
             - name: mysql-entrypoint-initdb
               mountPath: /docker-entrypoint-initdb.d
+          # exec 프로브는 컨테이너가 이미 죽었을 때 kubelet이 "CONTAINER_EXITED" RPC 오류를 낼 수 있음 → 기동 구간은 TCP만 확인
           startupProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-admin ping -h 127.0.0.1 -uroot
+            tcpSocket:
+              port: mysql
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 60
