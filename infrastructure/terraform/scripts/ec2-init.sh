@@ -186,7 +186,8 @@ setup_k8s() {
   # 노드 상태 확인
   kubectl get nodes
 
-  # 단일 노드 클러스터이므로 master 노드에 pod 스케줄링 허용 (CNI 설치 후 실행)
+  # 포트폴리오 제약으로 단일 노드 클러스터로 띄움
+  # 컨트롤 플레인을 워커 노드로도 사용하기 위해 master 노드에 pod 스케줄링 허용
   kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true
 
   echo "Kubernetes 설치 및 초기화 완료"
@@ -251,13 +252,7 @@ EOF
   systemctl daemon-reload
   systemctl enable buildkit.service
   systemctl start buildkit.service
-
-  # nerdctl 설치
-  local NERDCTL_VERSION="1.7.0"
-  curl -sSL "https://github.com/containerd/nerdctl/releases/download/v${NERDCTL_VERSION}/nerdctl-${NERDCTL_VERSION}-linux-amd64.tar.gz" | tar -xz -C /usr/local/bin
-  chmod +x /usr/local/bin/nerdctl
-  nerdctl --version
-
+  
   # nginx Ingress Controller 설치
   helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
   helm repo update
