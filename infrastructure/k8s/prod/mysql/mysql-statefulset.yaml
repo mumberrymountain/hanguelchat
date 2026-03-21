@@ -20,7 +20,7 @@ spec:
         fsGroup: 1001
       containers:
         - name: mariadb
-          image: docker.io/bitnami/mariadb:11.4
+          image: docker.io/bitnamilegacy/mariadb:11.4.7-debian-12-r2
           imagePullPolicy: IfNotPresent
           ports:
             - name: mysql
@@ -48,14 +48,12 @@ spec:
               mountPath: /bitnami/mariadb
             - name: mysql-entrypoint-initdb
               mountPath: /docker-entrypoint-initdb.d
-            - name: mysql-entrypoint-startdb
-              mountPath: /docker-entrypoint-startdb.d
           startupProbe:
             exec:
               command:
                 - /bin/bash
                 - -c
-                - mariadb-admin ping -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD"
+                - MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-admin ping -h 127.0.0.1 -uroot
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 60
@@ -64,7 +62,7 @@ spec:
               command:
                 - /bin/bash
                 - -c
-                - mariadb-admin ping -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD"
+                - MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-admin ping -h 127.0.0.1 -uroot
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 8
@@ -75,9 +73,10 @@ spec:
                 - -c
                 - |
                   set -e
-                  mariadb-admin ping -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" --silent
+                  export MYSQL_PWD="$MARIADB_ROOT_PASSWORD"
+                  mariadb-admin ping -h 127.0.0.1 -uroot --silent
                   [[ "${HOSTNAME##*-}" == "0" ]] && exit 0
-                  [[ "$(mariadb -h 127.0.0.1 -uroot -p"$MARIADB_ROOT_PASSWORD" -Nse \
+                  [[ "$(mariadb -h 127.0.0.1 -uroot -Nse \
                     "SELECT IF(Slave_IO_Running='Yes' AND Slave_SQL_Running='Yes' AND COALESCE(Seconds_Behind_Master,0)<=300,1,0) FROM information_schema.slave_status LIMIT 1" \
                     2>/dev/null)" == "1" ]]
             initialDelaySeconds: 10
@@ -86,10 +85,6 @@ spec:
             failureThreshold: 3
       volumes:
         - name: mysql-entrypoint-initdb
-          configMap:
-            name: mysql-init-config
-            defaultMode: 0755
-        - name: mysql-entrypoint-startdb
           configMap:
             name: mysql-init-config
             defaultMode: 0755

@@ -40,11 +40,15 @@ spec:
               value: mymaster
             - name: REDIS_SENTINEL_QUORUM
               value: "2"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           command:
             - /bin/bash
             - -ec
             - |
-              export REDIS_SENTINEL_ANNOUNCE_IP="${HOSTNAME}.redis-sentinel-headless"
+              export REDIS_SENTINEL_ANNOUNCE_IP="${POD_IP}"
               exec /opt/bitnami/scripts/redis-sentinel/entrypoint.sh /opt/bitnami/scripts/redis-sentinel/run.sh
           volumeMounts:
             - name: data
