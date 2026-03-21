@@ -52,7 +52,7 @@ spec:
               exec /opt/bitnami/scripts/redis-sentinel/entrypoint.sh /opt/bitnami/scripts/redis-sentinel/run.sh
           volumeMounts:
             - name: data
-              mountPath: /bitnami/redis-sentinel
+              mountPath: /bitnami/redis-sentinel/data
           livenessProbe:
             exec:
               command:

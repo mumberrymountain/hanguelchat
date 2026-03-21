@@ -56,7 +56,7 @@ spec:
                 - MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-admin ping -h 127.0.0.1 -uroot
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 60
+            failureThreshold: 30
           livenessProbe:
             exec:
               command:
@@ -72,13 +72,22 @@ spec:
                 - /bin/bash
                 - -c
                 - |
-                  set -e
+                  set -euo pipefail
                   export MYSQL_PWD="$MARIADB_ROOT_PASSWORD"
-                  mariadb-admin ping -h 127.0.0.1 -uroot --silent
-                  [[ "${HOSTNAME##*-}" == "0" ]] && exit 0
-                  [[ "$(mariadb -h 127.0.0.1 -uroot -Nse \
+                  # ping 성공 시 stdout에 "mysqld is alive"가 나와 이벤트만 헷갈리므로 버림
+                  mariadb-admin ping -h 127.0.0.1 -uroot --silent >/dev/null 2>&1
+                  ORD="${HOSTNAME##*-}"
+                  if [[ "$ORD" == "0" ]]; then
+                    exit 0
+                  fi
+                  rep="$(mariadb -h 127.0.0.1 -uroot -Nse \
                     "SELECT IF(Slave_IO_Running='Yes' AND Slave_SQL_Running='Yes' AND COALESCE(Seconds_Behind_Master,0)<=300,1,0) FROM information_schema.slave_status LIMIT 1" \
-                    2>/dev/null)" == "1" ]]
+                    2>/dev/null || true)"
+                  if [[ "$rep" == "1" ]]; then
+                    exit 0
+                  fi
+                  echo "readiness: replication not ready (slave_status=${rep:-empty})" >&2
+                  exit 1
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 5
