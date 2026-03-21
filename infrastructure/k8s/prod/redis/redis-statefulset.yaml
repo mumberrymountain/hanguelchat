@@ -19,17 +19,6 @@ spec:
     spec:
       securityContext:
         fsGroup: 1001
-      initContainers:
-        - name: check-redis-secret
-          image: docker.io/busybox:1.36
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - secretRef:
-                name: redis-secret
-          command:
-            - sh
-            - -c
-            - 'test -n "$REDIS_PASSWORD" || { echo "check-redis-secret: REDIS_PASSWORD is empty"; exit 1; }'
       containers:
         - name: redis
           image: docker.io/bitnamilegacy/redis:7.4.3-debian-12-r0
@@ -40,16 +29,11 @@ spec:
           envFrom:
             - secretRef:
                 name: redis-secret
-          env:
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
           command:
             - /bin/bash
             - -ec
             - |
-              export REDIS_REPLICA_IP="${POD_IP}"
+              export REDIS_REPLICA_IP="${HOSTNAME}.redis-headless"
               export REDIS_REPLICA_PORT="6379"
               ORD="${HOSTNAME##*-}"
               if [[ "$ORD" == "0" ]]; then
@@ -64,12 +48,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /bitnami/redis
-          startupProbe:
-            tcpSocket:
-              port: redis
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 60
           livenessProbe:
             exec:
               command:
